@@ -558,3 +558,13 @@
             </div>
 
 @endsection
+
+@section('footer')
+
+<footer class="footer" style="margin-top:40px;" >
+			<div class="payment">
+				<div class=""><span>Supported by <a href="http://sistemtoko.com">www.sistemtoko.com</a></span>. Allright reserved</div>
+			</div>
+</footer>
+
+@endsection

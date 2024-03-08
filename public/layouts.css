@@ -1,0 +1,38 @@
+html, body 
+    {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    #open-cart.menu-toggle
+    {
+        border-radius: 0;
+	    background: transparent!important;
+	    color: #000;
+	    border: none;
+	    font-size: 24px;
+    }
+    @media (max-width: 480px)
+    {
+    	.shop-top
+    	{
+    		display: none; 
+    	}
+    	#detail_product
+    	{
+    		margin-top: 60px;
+    	}
+    	#header 
+    	{
+		    position: fixed;
+		    width: 100%;
+		    background: #fff;
+		    z-index: 2;
+    	}
+
+    	.home-slide3 
+    	{
+    		margin-top:55px ; 
+    	}
+    	.header.style3 .mini-cart .cart-link .icon {margin: 0 !important ;}
+    	.main-content { padding-top:55px !important; }
+    }

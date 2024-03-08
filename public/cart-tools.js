@@ -1,5 +1,3 @@
-   //############################## FUNGSI KETIKA KLIK ADD TO SHOPING CART ###############################
-
    $(document).ready(function() {
         
     var totalPrice  = 0;
@@ -883,5 +881,173 @@
     $(document).on('click', ".menu-toggle", function(e) {
         e.preventDefault();
         $("#cart-wrapper").toggleClass("toggled");
+    });
+});
+
+jQuery(document).ready(function($) {
+        
+    /* ###### KETIKA KLIK TOMBOL BELI ######## */
+    $('body').delegate('.buy-product', 'click', function() 
+    {
+        var price          = $(this).parent().find("option:selected").data("price");
+        var product_id     = $(this).parent().find("option:selected").data("product-id");
+        var product_name   = $(this).parent().find("option:selected").data("product-name");
+        var varian         = $(this).parent().find("option:selected").data("varian");
+        var product_img    = $(this).parent().find("option:selected").data("product-img");
+        var product_price  = $(this).parent().find("option:selected").data("product-price");
+        var product_weight = $(this).parent().find("option:selected").data("product-weight");
+        var product_stock  = $(this).parent().find("option:selected").data("product-stock");
+        /* API INSERT PRODUCT */
+        if (product_stock == 'unlimited' || product_stock > 0) {
+            window.addCart(product_id, product_name + " - " + varian, product_img, product_price, product_weight) ; 
+        } else {
+            alert('Stok barang ' + product_name + " - " + varian + ' kosong');
+        }
+    });
+
+    $('#search, #search button.close').on('click keyup', function(event) {
+        if (event.target == this || event.target.className == 'close' || event.keyCode == 27) {
+            $(this).removeClass('open');
+        }
+    });
+
+    
+
+    function getParameterByName(name, url) {if (!url) url = window.location.href; name = name.replace(/[\[\]]/g, "\\$&"); var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url); if (!results) return null; if (!results[2]) return ''; return decodeURIComponent(results[2].replace(/\+/g, " ")); } 
+
+    page = 1; lanjut = 0 ; 
+    var page = getParameterByName('page'); 
+    if ( page == null ) { page = page_top = 1 ;} else { page = page_top= parseInt(page);}
+    // make parameter 
+    function createParameter(format)
+    {
+        var page = getParameterByName('page'); 
+        if ( page == null ) { page =  1 ;} else { page = parseInt(page);}
+        if ( format == 'array')
+        {
+            parameterArray = [] ;
+            var sorting = getParameterByName('sorting') ; if ( sorting == null ){ sorting = 'Lates'; }
+            var categories = getParameterByName('categories') ; if ( categories == null ) { categories = 'all'; }
+            var categories_name = getParameterByName('categories_name') ; if ( categories == null ) { categories = 'Categories'; }
+            var search_name  = getParameterByName('search_name') ; if ( search_name == null ) {search_name='none'; }
+            parameterArray['sorting'] = sorting ;  
+            parameterArray['categories'] = categories ;  
+            parameterArray['categories_name'] = categories_name; 
+            parameterArray['search_name'] = search_name ;  
+            parameterArray['page'] = page ; 
+            return parameterArray; 
+        }
+        else
+        {
+            var sorting = getParameterByName('sorting') ; if ( sorting == null ){ sorting = 'Lates'; }
+            var categories = getParameterByName('categories') ; if ( categories == null ) { categories = 'all'; }
+            var categories_name = getParameterByName('categories_name') ; if ( categories == null ) { categories = 'Categories'; }
+            var search_name  = getParameterByName('search_name') ; if ( search_name == null ) {search_name='none'; }
+            parameter = "sorting="+sorting+"&categories="+categories+"&search_name="+search_name;
+            return parameter; 
+        }
+       
+    }
+
+    function load_content(page,parameter,position)
+    {
+        if (typeof(position)==='undefined') position = 'bottom';
+        if (position == 'bottom')
+        {
+            $("#loading").show();
+            $("#footer_content").slideUp();
+            $(".footer").css("padding-top","0");
+        }
+        else
+        {
+            $("#loading_top").show(); 
+        }
+        
+        $.get( "https://hijja.sistemtoko.com/product?page="+page+"&"+parameter, function( data ) 
+        {
+            //console.log(data);
+            if ( data == "no data" )
+            {
+                $("#loading").hide();
+                lanjut = 0 ; 
+
+                $("#footer_content").slideDown();
+                $(".footer").css("padding-top","50px");
+
+
+                return false ; 
+            }
+
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page='+page;
+            window.history.pushState({path:newurl},'',newurl);
+
+            
+            if ( position == 'bottom')
+            {
+
+                $("#loading").hide();
+                $(".product-list-grid").append(data) ; 
+            }
+            else
+            {
+                $("#loading_top").hide();
+                $(".product-list-grid").prepend(data) ; 
+                if ( page == 1 )
+                {
+                    $("#load_previous").hide();
+                }
+
+            }
+            
+            lanjut = 1 ;
+            position = ""; 
+        });
+    }
+    $(window).scroll(function() 
+    {                           
+        parameter = createParameter(); 
+        //console.log($(window).scrollTop());
+        $sc = $(window).scrollTop() + $(window).height();
+        $doc = $(document).height() - 100 ;
+       
+       if($sc > $doc ) 
+       {
+            if ( lanjut  == 1 )
+            {
+                lanjut = 0 ; 
+                page = page + 1 ; 
+                first_box = true ; 
+                $("#loading").show();
+                load_content(page,parameter)  ; 
+            } 
+       }
+    });
+
+    $("body").delegate('#load_more','click',function()
+    {
+        lanjut = 1 ; 
+        page = page + 1 ; 
+        $(this).hide() ; 
+        parameter = createParameter(); 
+        load_content(page,parameter);
+    });
+
+    $("body").delegate("#load_previous",'click',function()
+    {
+        page = page - 1 ; 
+        parameter = createParameter(); 
+        load_content(page,parameter,'top');
+    })
+
+    $("body").delegate(".product_dropdown",'change',function()
+    {
+
+        var price = $(this).find("option:selected").data("product-price");
+        console.log(price)
+        price = toRp(price); 
+        $(this).parent().parent().find(".product_price").html(price);
+        //rubah image 
+        var img = $(this).find("option:selected").data("product-img");
+        $(this).parent().parent().parent().find(".product-img").attr("src",img);
     });
 });

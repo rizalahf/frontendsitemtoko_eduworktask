@@ -1,0 +1,25 @@
+.hide-it {
+	display: none;
+}
+#service {
+	margin: 0 5px;
+	width: 96%;
+}
+.spinning {
+	animation: spin 1s infinite linear;
+	-webkit-animation: spin 1s infinite linear;
+}
+.input-group {
+	width: 120px;
+	/*margin: auto;*/
+}
+@keyframes  spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+#shoping_cart img {
+	width: 88px;
+}
+#shoping_cart .input-number {
+	width: 50px;
+}
